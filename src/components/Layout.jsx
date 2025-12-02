@@ -62,7 +62,7 @@ const Layout = () => {
         <nav className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent animate-gradient">
-              Shafiur Rahman
+              Shafiur Rahman Rad
             </Link>
 
             {/* Desktop Navigation */}
@@ -131,7 +131,7 @@ const Layout = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-                Shafiur Rahman
+                Shafiur Rahman Rad
               </h3>
               <p className="text-gray-400">MERN Stack Developer</p>
             </div>
