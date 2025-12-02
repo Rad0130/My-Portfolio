@@ -1,4 +1,5 @@
 import { FaBriefcase, FaLaptopCode, FaChartLine, FaPenNib, FaDollarSign, FaUsers } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Experience = () => {
   const experiences = [
@@ -151,13 +152,13 @@ const Experience = () => {
               I'm actively seeking opportunities to apply my skills in web development, 
               project management, and team leadership. Let's build something amazing together!
             </p>
-            <a
-              href="/contact"
+            <Link
+              to="/contact"
               className="inline-flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105"
             >
               <FaUsers />
               <span>Let's Connect</span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>
