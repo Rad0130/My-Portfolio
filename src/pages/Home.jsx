@@ -59,12 +59,12 @@ const Home = () => {
                 <span>View Projects</span>
                 <FaArrowRight className="animate-bounce-horizontal" />
               </Link>
-              <a
-                href="#contact"
+              <Link
+                to="/contact"
                 className="px-8 py-3 border-2 border-purple-500 rounded-full font-semibold hover:bg-purple-500/20 transition-all duration-300 transform hover:scale-105"
               >
                 Contact Me
-              </a>
+              </Link>
             </div>
           </div>
 
