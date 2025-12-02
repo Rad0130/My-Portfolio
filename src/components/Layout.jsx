@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, Outlet } from "react-router-dom";
+import { Link, useLocation, Outlet, NavLink } from "react-router-dom";
 import { FaBars, FaTimes, FaGithub, FaLinkedin, FaEnvelope, FaPhone } from "react-icons/fa";
 
 const Layout = () => {
@@ -61,14 +61,14 @@ const Layout = () => {
       <header className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-gray-900/90 backdrop-blur-sm shadow-lg' : 'bg-transparent'}`}>
         <nav className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent animate-gradient">
+            <NavLink to="/" className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent animate-gradient">
               Shafiur Rahman Rad
-            </Link>
+            </NavLink>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-8">
               {navItems.map((item) => (
-                <Link
+                <NavLink
                   key={item.name}
                   to={item.path}
                   className={`relative px-3 py-2 transition-all duration-300 hover:text-purple-300 ${
@@ -85,7 +85,7 @@ const Layout = () => {
                         : "scale-x-0"
                     }`}
                   ></span>
-                </Link>
+                </NavLink>
               ))}
             </div>
 
@@ -102,7 +102,7 @@ const Layout = () => {
           {isOpen && (
             <div className="md:hidden mt-4 space-y-4 bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 animate-slideDown">
               {navItems.map((item) => (
-                <Link
+                <NavLink
                   key={item.name}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
@@ -113,7 +113,7 @@ const Layout = () => {
                   }`}
                 >
                   {item.name}
-                </Link>
+                </NavLink>
               ))}
             </div>
           )}
