@@ -1,165 +1,97 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
+import { motion, useScroll, useSpring } from "framer-motion";
 import { FaBars, FaTimes, FaGithub, FaLinkedin, FaEnvelope, FaPhone } from "react-icons/fa";
+import { profile } from "../data";
+
+const navItems = [
+  { name: "Home", path: "/" },
+  { name: "About", path: "/about" },
+  { name: "Skills", path: "/skills" },
+  { name: "Projects", path: "/projects" },
+  { name: "Experience", path: "/experience" },
+  { name: "Contact", path: "/contact" },
+];
 
 const Layout = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
-
-  const navItems = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Skills", path: "/skills" },
-    { name: "Projects", path: "/projects" },
-    { name: "Experience", path: "/experience" },
-    { name: "Contact", path: "/contact" },
-  ];
+  const { pathname } = useLocation();
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 30);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => setOpen(false), [pathname]);
+
+  const link = ({ isActive }) =>
+    `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+      isActive ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-fuchsia-500/30" : "text-slate-300 hover:text-white hover:bg-white/10"
+    }`;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-500"></div>
+    <div className="relative min-h-screen overflow-x-hidden">
+      <motion.div style={{ scaleX: progress }} className="fixed top-0 left-0 right-0 h-1 origin-left z-[60] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-amber-400" />
+
+      {/* Background */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute inset-0 grid-bg" />
+        <div className="blob bg-violet-600 -top-32 -left-32" />
+        <div className="blob bg-fuchsia-600 top-1/3 -right-40" style={{ animationDelay: "-6s" }} />
+        <div className="blob bg-sky-500 -bottom-40 left-1/4" style={{ animationDelay: "-12s" }} />
       </div>
 
-      {/* Floating Animated Text */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-10 left-0 animate-float-left">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 text-2xl opacity-10 font-bold">
-            React.js
-          </span>
-        </div>
-        <div className="absolute top-20 right-0 animate-float-right">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-600 text-2xl opacity-10 font-bold">
-            MERN Stack
-          </span>
-        </div>
-        <div className="absolute bottom-20 left-10 animate-float-left-slow">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-600 text-2xl opacity-10 font-bold">
-            Tailwind CSS
-          </span>
-        </div>
-        <div className="absolute bottom-10 right-10 animate-float-right-slow">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-600 text-2xl opacity-10 font-bold">
-            JavaScript
-          </span>
-        </div>
-      </div>
-
-      {/* Header/Navigation */}
-      <header className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-gray-900/90 backdrop-blur-sm shadow-lg' : 'bg-transparent'}`}>
-        <nav className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <NavLink to="/" className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent animate-gradient">
-              Shafiur Rahman Rad
-            </NavLink>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex space-x-8">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.path}
-                  className={`relative px-3 py-2 transition-all duration-300 hover:text-purple-300 ${
-                    location.pathname === item.path
-                      ? "text-purple-400 font-semibold"
-                      : "text-gray-300"
-                  }`}
-                >
-                  {item.name}
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-purple-400 to-pink-600 transform transition-transform duration-300 ${
-                      location.pathname === item.path
-                        ? "scale-x-100"
-                        : "scale-x-0"
-                    }`}
-                  ></span>
-                </NavLink>
-              ))}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden text-2xl"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? <FaTimes /> : <FaBars />}
-            </button>
+      <header className="fixed top-0 inset-x-0 z-50 px-4 pt-4">
+        <nav className={`mx-auto max-w-5xl rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 ${scrolled ? "glass shadow-2xl shadow-black/40" : "bg-transparent"}`}>
+          <NavLink to="/" className="font-display text-xl font-bold grad-text">Rad.</NavLink>
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((n) => (
+              <NavLink key={n.path} to={n.path} end className={link}>{n.name}</NavLink>
+            ))}
           </div>
-
-          {/* Mobile Navigation */}
-          {isOpen && (
-            <div className="md:hidden mt-4 space-y-4 bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 animate-slideDown">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`block px-4 py-3 rounded-lg transition-all duration-300 ${
-                    location.pathname === item.path
-                      ? "bg-gradient-to-r from-purple-600 to-pink-700 text-white"
-                      : "hover:bg-gray-700"
-                  }`}
-                >
-                  {item.name}
-                </NavLink>
-              ))}
-            </div>
-          )}
+          <button className="md:hidden text-xl p-2" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+            {open ? <FaTimes /> : <FaBars />}
+          </button>
         </nav>
+        {open && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="md:hidden glass rounded-3xl mt-2 p-3 mx-auto max-w-5xl flex flex-col gap-1">
+            {navItems.map((n) => (
+              <NavLink key={n.path} to={n.path} end className={link}>{n.name}</NavLink>
+            ))}
+          </motion.div>
+        )}
       </header>
 
-      {/* Main Content - THIS IS WHERE PAGES RENDER */}
-      <main className="relative z-10 pt-20">
+      {/* key on pathname replays the entrance animation for each page */}
+      <motion.main key={pathname} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="pt-28">
         <Outlet />
-      </main>
+      </motion.main>
 
-      {/* Footer */}
-      <footer className="relative z-10 bg-gray-900/50 backdrop-blur-sm border-t border-gray-800 mt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-                Shafiur Rahman Rad
-              </h3>
-              <p className="text-gray-400">MERN Stack Developer</p>
-            </div>
-            
-            <div className="flex space-x-6">
-              <a href="https://github.com/Rad0130" target="_blank" rel="noopener noreferrer" 
-                 className="text-2xl hover:text-purple-400 transition-transform duration-300 hover:scale-110">
-                <FaGithub />
-              </a>
-              <a href="https://linkedin.com/in/shafiur-rahman-rad" target="_blank" rel="noopener noreferrer"
-                 className="text-2xl hover:text-blue-400 transition-transform duration-300 hover:scale-110">
-                <FaLinkedin />
-              </a>
-              <a href="mailto:shafiurrahmanrad25@gmail.com"
-                 className="text-2xl hover:text-red-400 transition-transform duration-300 hover:scale-110">
-                <FaEnvelope />
-              </a>
-              <a href="tel:+8801309634127"
-                 className="text-2xl hover:text-green-400 transition-transform duration-300 hover:scale-110">
-                <FaPhone />
-              </a>
-            </div>
+      <footer className="mt-24 border-t border-white/10">
+        <div className="container mx-auto px-4 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="text-center md:text-left">
+            <p className="font-display text-2xl font-bold grad-text">{profile.name}</p>
+            <p className="text-slate-400 text-sm">Full Stack Developer · Dhaka, Bangladesh</p>
           </div>
-          
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-500">
-            <p>&copy; {new Date().getFullYear()} Shafiur Rahman Rad. All rights reserved.</p>
+          <div className="flex gap-3 text-xl">
+            {[
+              [profile.github, <FaGithub />, "GitHub"],
+              [profile.linkedin, <FaLinkedin />, "LinkedIn"],
+              [`mailto:${profile.email}`, <FaEnvelope />, "Email"],
+              [`tel:${profile.phone}`, <FaPhone />, "Phone"],
+            ].map(([href, icon, label]) => (
+              <a key={label} href={href} aria-label={label} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
+                 className="w-11 h-11 rounded-full glass flex items-center justify-center hover:scale-110 hover:bg-fuchsia-500/30 transition-all">
+                {icon}
+              </a>
+            ))}
           </div>
         </div>
+        <p className="text-center text-slate-500 text-sm pb-8">© {new Date().getFullYear()} {profile.name}</p>
       </footer>
     </div>
   );

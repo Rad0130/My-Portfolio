@@ -1,132 +1,86 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaArrowRight, FaCode, FaLaptopCode, FaServer, FaDatabase, FaEnvelope, FaPhone } from "react-icons/fa";
+import { motion, animate } from "framer-motion";
+import { FaArrowRight, FaDownload, FaGithub, FaLinkedin } from "react-icons/fa";
+import { profile, stats, skills } from "../data";
+import { Reveal } from "../components/Reveal";
+
+const Typer = ({ words }) => {
+  const [i, setI] = useState(0);
+  const [t, setT] = useState("");
+  const [del, setDel] = useState(false);
+  useEffect(() => {
+    const w = words[i];
+    let d = del ? 35 : 80;
+    if (!del && t === w) d = 1400;
+    const id = setTimeout(() => {
+      if (!del && t === w) setDel(true);
+      else if (del && t === "") { setDel(false); setI((i + 1) % words.length); }
+      else setT(del ? w.slice(0, t.length - 1) : w.slice(0, t.length + 1));
+    }, d);
+    return () => clearTimeout(id);
+  }, [t, del, i, words]);
+  return <span className="grad-text">{t}<span className="animate-pulse text-fuchsia-400">|</span></span>;
+};
+
+const Counter = ({ to, suffix }) => {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    const c = animate(0, to, { duration: 1.8, ease: "easeOut", onUpdate: (v) => setN(Math.round(v)) });
+    return () => c.stop();
+  }, [to]);
+  return <>{n}{suffix}</>;
+};
 
 const Home = () => {
-  const stats = [
-    { label: "Projects Completed", value: "4+", icon: <FaCode /> },
-    { label: "Technologies", value: "10+", icon: <FaLaptopCode /> },
-    { label: "Frontend Skills", value: "Expert", icon: <FaLaptopCode /> },
-    { label: "Backend Skills", value: "Intermediate", icon: <FaServer /> },
-  ];
-
+  const marquee = skills.flatMap((s) => s.items).slice(0, 24);
   return (
-    <div className="min-h-screen flex items-center">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
-          <div className="space-y-8 animate-fadeIn">
-            <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-                <span className="block">Hello, I'm</span>
-                <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent animate-gradient">
-                  Shafiur Rahman Rad
-                </span>
-              </h1>
-              
-              <h2 className="text-2xl md:text-3xl text-gray-300">
-                MERN Stack Developer
-              </h2>
-              
-              <p className="text-lg text-gray-400 max-w-xl">
-                Motivated Computer Science student at BRAC University specializing in 
-                Frontend and MERN Stack development. Passionate about building 
-                user-centered digital products and contributing to impactful tech communities.
-              </p>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {stats.map((stat, index) => (
-                <div 
-                  key={index}
-                  className="bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:scale-105"
-                >
-                  <div className="flex items-center space-x-2 text-purple-400">
-                    {stat.icon}
-                    <span className="text-2xl font-bold">{stat.value}</span>
-                  </div>
-                  <p className="text-sm text-gray-400 mt-2">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <Link
-                to="/projects"
-                className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
-              >
-                <span>View Projects</span>
-                <FaArrowRight className="animate-bounce-horizontal" />
-              </Link>
-              <Link
-                to="/contact"
-                className="px-8 py-3 border-2 border-purple-500 rounded-full font-semibold hover:bg-purple-500/20 transition-all duration-300 transform hover:scale-105"
-              >
-                Contact Me
-              </Link>
-            </div>
+    <div className="container mx-auto px-4">
+      <section className="min-h-[80vh] grid lg:grid-cols-2 gap-12 items-center py-8">
+        <div className="order-2 lg:order-1 space-y-7">
+          <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="inline-block glass rounded-full px-4 py-1.5 text-sm text-slate-200">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse" />
+            Open to internships & freelance work
+          </motion.p>
+          <h1 className="font-display text-5xl md:text-7xl font-bold leading-[1.05]">
+            Hi, I'm <br /><span className="grad-text">{profile.name}</span>
+          </h1>
+          <h2 className="font-display text-2xl md:text-4xl text-slate-200 h-12"><Typer words={profile.roles} /></h2>
+          <p className="text-lg text-slate-300 max-w-xl leading-relaxed">{profile.summary}</p>
+          <div className="flex flex-wrap gap-4">
+            <Link to="/projects" className="btn-primary">View my work <FaArrowRight /></Link>
+            <a href={profile.resume} download className="btn-ghost"><FaDownload /> Resume</a>
           </div>
-
-          {/* Right Content - Profile Card */}
-          <div className="relative">
-            <div className="relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-3xl p-8 border border-gray-700 shadow-2xl transform hover:scale-[1.02] transition-all duration-500">
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-xl opacity-30"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full blur-xl opacity-30"></div>
-              
-              <div className="space-y-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 p-1">
-                    <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center">
-                      <span className="text-2xl font-bold">SR</span>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold">Contact Info</h3>
-                    <p className="text-gray-400">Get in touch</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all duration-300">
-                    <div className="w-10 h-10 rounded-full bg-purple-900/50 flex items-center justify-center">
-                      <FaEnvelope className="text-purple-400" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Email</p>
-                      <p className="font-medium">shafiurrahmanrad25@gmail.com</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all duration-300">
-                    <div className="w-10 h-10 rounded-full bg-blue-900/50 flex items-center justify-center">
-                      <FaPhone className="text-blue-400" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Phone</p>
-                      <p className="font-medium">+8801309634127</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all duration-300">
-                    <div className="w-10 h-10 rounded-full bg-green-900/50 flex items-center justify-center">
-                      <FaDatabase className="text-green-400" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Location</p>
-                      <p className="font-medium">Dhaka, Bangladesh</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-6 border-t border-gray-800">
-                  <p className="text-gray-400 text-center">
-                    "Passionate about building user-centered digital products"
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="flex gap-3 text-xl text-slate-300">
+            <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="hover:text-white hover:scale-110 transition"><FaGithub /></a>
+            <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-sky-400 hover:scale-110 transition"><FaLinkedin /></a>
           </div>
+        </div>
+
+        <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="order-1 lg:order-2 relative mx-auto w-72 sm:w-96">
+          <div className="absolute -inset-3 rounded-[2.5rem] bg-[conic-gradient(from_0deg,#8b5cf6,#ec4899,#fbbf24,#38bdf8,#8b5cf6)] blur-xl opacity-60 animate-spin-slow" />
+          <div className="relative rounded-[2.5rem] p-[3px] bg-gradient-to-br from-violet-500 via-fuchsia-500 to-amber-400">
+            <img src={profile.photo} alt={profile.name} className="rounded-[2.4rem] w-full aspect-[4/5] object-cover object-top" />
+          </div>
+          <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 4 }} className="absolute -left-6 top-10 glass rounded-2xl px-4 py-2 text-sm font-semibold">⚛️ React · Node</motion.div>
+          <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 5 }} className="absolute -right-4 bottom-12 glass rounded-2xl px-4 py-2 text-sm font-semibold">🎓 BRAC University</motion.div>
+        </motion.div>
+      </section>
+
+      <Reveal className="grid grid-cols-2 md:grid-cols-4 gap-4 my-16">
+        {stats.map((s) => (
+          <div key={s.label} className="glass rounded-3xl p-6 text-center hover:-translate-y-1 transition">
+            <p className="font-display text-4xl md:text-5xl font-bold grad-text"><Counter to={s.value} suffix={s.suffix} /></p>
+            <p className="text-slate-300 text-sm mt-1">{s.label}</p>
+          </div>
+        ))}
+      </Reveal>
+
+      <div className="overflow-hidden -mx-4 py-4 [mask-image:linear-gradient(90deg,transparent,#000_15%,#000_85%,transparent)]">
+        <div className="marquee flex w-max gap-4">
+          {[...marquee, ...marquee].map((m, i) => (
+            <span key={i} className="glass rounded-full px-5 py-2 text-sm whitespace-nowrap">{m}</span>
+          ))}
         </div>
       </div>
     </div>
