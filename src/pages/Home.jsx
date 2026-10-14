@@ -2,8 +2,16 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, animate } from "framer-motion";
 import { FaArrowRight, FaDownload, FaGithub, FaLinkedin } from "react-icons/fa";
-import { profile, stats, skills } from "../data";
+import { profile, stats, skills, projects } from "../data";
 import { Reveal } from "../components/Reveal";
+
+const statStyles = [
+  { grad: "from-violet-600 to-fuchsia-500", glow: "shadow-fuchsia-500/40", icon: "🚀" },
+  { grad: "from-sky-500 to-indigo-600", glow: "shadow-sky-500/40", icon: "🧰" },
+  { grad: "from-amber-400 to-orange-600", glow: "shadow-orange-500/40", icon: "⏳" },
+  { grad: "from-emerald-400 to-teal-600", glow: "shadow-emerald-500/40", icon: "👥" },
+];
+const chipBorders = ["border-violet-400/60", "border-fuchsia-400/60", "border-amber-400/60", "border-sky-400/60", "border-emerald-400/60"];
 
 const Typer = ({ words }) => {
   const [i, setI] = useState(0);
@@ -62,27 +70,52 @@ const Home = () => {
           <div className="relative rounded-[2.5rem] p-[3px] bg-gradient-to-br from-violet-500 via-fuchsia-500 to-amber-400">
             <img src={profile.photo} alt={profile.name} className="rounded-[2.4rem] w-full aspect-[4/5] object-cover object-top" />
           </div>
-          <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 4 }} className="absolute -left-6 top-10 glass rounded-2xl px-4 py-2 text-sm font-semibold">⚛️ React · Node</motion.div>
-          <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 5 }} className="absolute -right-4 bottom-12 glass rounded-2xl px-4 py-2 text-sm font-semibold">🎓 BRAC University</motion.div>
+          <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 4 }} className="absolute -left-6 top-10 rounded-2xl px-4 py-2 text-sm font-semibold bg-gradient-to-r from-violet-600 to-fuchsia-500 shadow-lg shadow-fuchsia-500/40">⚛️ React · Node</motion.div>
+          <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 5 }} className="absolute -right-4 bottom-12 rounded-2xl px-4 py-2 text-sm font-semibold bg-gradient-to-r from-amber-400 to-orange-500 shadow-lg shadow-orange-500/40">🎓 BRAC University</motion.div>
         </motion.div>
       </section>
 
+      {/* Colorful stat cards */}
       <Reveal className="grid grid-cols-2 md:grid-cols-4 gap-4 my-16">
-        {stats.map((s) => (
-          <div key={s.label} className="glass rounded-3xl p-6 text-center hover:-translate-y-1 transition">
-            <p className="font-display text-4xl md:text-5xl font-bold grad-text"><Counter to={s.value} suffix={s.suffix} /></p>
-            <p className="text-slate-300 text-sm mt-1">{s.label}</p>
+        {stats.map((s, i) => (
+          <div key={s.label} className={`relative overflow-hidden rounded-3xl p-6 text-center bg-gradient-to-br ${statStyles[i].grad} shadow-xl ${statStyles[i].glow} hover:-translate-y-2 hover:rotate-1 transition duration-300`}>
+            <span className="absolute -top-4 -right-2 text-7xl opacity-20 select-none">{statStyles[i].icon}</span>
+            <p className="relative font-display text-4xl md:text-5xl font-bold text-white drop-shadow"><Counter to={s.value} suffix={s.suffix} /></p>
+            <p className="relative text-white/90 text-sm mt-1 font-medium">{s.label}</p>
           </div>
         ))}
       </Reveal>
 
+      {/* Tech marquee */}
       <div className="overflow-hidden -mx-4 py-4 [mask-image:linear-gradient(90deg,transparent,#000_15%,#000_85%,transparent)]">
         <div className="marquee flex w-max gap-4">
           {[...marquee, ...marquee].map((m, i) => (
-            <span key={i} className="glass rounded-full px-5 py-2 text-sm whitespace-nowrap">{m}</span>
+            <span key={i} className={`glass border ${chipBorders[i % chipBorders.length]} rounded-full px-5 py-2 text-sm whitespace-nowrap`}>{m}</span>
           ))}
         </div>
       </div>
+
+      {/* Featured work */}
+      <Reveal className="my-20">
+        <div className="flex items-end justify-between mb-8 gap-4">
+          <h2 className="font-display text-3xl md:text-5xl font-bold">Featured work</h2>
+          <Link to="/projects" className="text-fuchsia-300 hover:text-white transition flex items-center gap-2">All projects <FaArrowRight /></Link>
+        </div>
+        <div className="grid md:grid-cols-3 gap-5">
+          {projects.slice(0, 3).map((p) => (
+            <Link key={p.title} to="/projects" className={`group relative overflow-hidden rounded-3xl p-6 min-h-[220px] flex flex-col justify-between bg-gradient-to-br ${p.grad} shadow-xl hover:-translate-y-2 hover:shadow-2xl transition duration-300`}>
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full bg-white/20 blur-2xl group-hover:scale-150 transition duration-500" />
+              <div className="relative">
+                <h3 className="font-display text-3xl font-bold text-white">{p.title}</h3>
+                <p className="text-white/85">{p.type}</p>
+              </div>
+              <div className="relative flex flex-wrap gap-2 mt-6">
+                {p.tech.slice(0, 3).map((t) => <span key={t} className="px-3 py-1 text-xs rounded-full bg-black/25 text-white">{t}</span>)}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </Reveal>
     </div>
   );
 };

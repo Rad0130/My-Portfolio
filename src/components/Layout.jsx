@@ -3,6 +3,7 @@ import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { FaBars, FaTimes, FaGithub, FaLinkedin, FaEnvelope, FaPhone } from "react-icons/fa";
 import { profile } from "../data";
+import Background from "./Background";
 
 const navItems = [
   { name: "Home", path: "/" },
@@ -37,13 +38,8 @@ const Layout = () => {
     <div className="relative min-h-screen overflow-x-hidden">
       <motion.div style={{ scaleX: progress }} className="fixed top-0 left-0 right-0 h-1 origin-left z-[60] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-amber-400" />
 
-      {/* Background */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute inset-0 grid-bg" />
-        <div className="blob bg-violet-600 -top-32 -left-32" />
-        <div className="blob bg-fuchsia-600 top-1/3 -right-40" style={{ animationDelay: "-6s" }} />
-        <div className="blob bg-sky-500 -bottom-40 left-1/4" style={{ animationDelay: "-12s" }} />
-      </div>
+      {/* Interactive background */}
+      <Background />
 
       <header className="fixed top-0 inset-x-0 z-50 px-4 pt-4">
         <nav className={`mx-auto max-w-5xl rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 ${scrolled ? "glass shadow-2xl shadow-black/40" : "bg-transparent"}`}>
@@ -67,11 +63,11 @@ const Layout = () => {
       </header>
 
       {/* key on pathname replays the entrance animation for each page */}
-      <motion.main key={pathname} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="pt-28">
+      <motion.main key={pathname} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="relative z-10 pt-28">
         <Outlet />
       </motion.main>
 
-      <footer className="mt-24 border-t border-white/10">
+      <footer className="relative z-10 mt-24 border-t border-white/10">
         <div className="container mx-auto px-4 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left">
             <p className="font-display text-2xl font-bold grad-text">{profile.name}</p>
